@@ -2,6 +2,10 @@ package com.example.ex_p4_banuelosdelatorresantiagodominik;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -9,15 +13,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private WordViewModel mWordViewModel;
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
+
+    public EditText cajaBuscale;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +56,38 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener( view -> {
             Intent intent = new Intent(MainActivity.this, NewWordActivity.class);
             startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
+        });
+
+        cajaBuscale = findViewById(R.id.txtBusqueda);
+
+        autoBusqueda(adapter);
+    }
+    public void autoBusqueda(ListAdapter<Word, WordViewHolder> adapter){
+        MainActivity hook = this;
+        cajaBuscale.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String busq = cajaBuscale.getText().toString();
+                LiveData<List<Word>> mods = mWordViewModel.lookForWord(busq);
+                //List<Word> mods = mWordViewModel.lookForWord(busq).getValue();
+                mods.observe(hook, words -> {
+                    Log.i("AYUDA", ""+words.size());
+                    adapter.submitList(words);
+                });
+
+                //Log.i("AYUDA", ""+mods.size());
+
+            }
         });
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

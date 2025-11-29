@@ -34,4 +34,7 @@ class WordRepository {
             mWordDao.insert(word);
         });
     }
+    LiveData<List<Word>> lookForWord(String like){
+        return mWordDao.getCoincidingWords(like);
+    }
 }
