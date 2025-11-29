@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Ex_P4_BanuelosDeLaTorreSantiagoDominik</string>
     <string name="add_word">Nuevo</string>
+    <string name="hint_word">Word...</string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_saved">Word not saved because it is empty.</string>
 </resources>
